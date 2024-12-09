@@ -1,5 +1,6 @@
 /home/luka/Repos/RMT_D2/RMT_server/src/main/java/com/jelisavacluka554/rmt_server/domain/ApplicationItem.java
 /home/luka/Repos/RMT_D2/RMT_server/src/main/java/com/jelisavacluka554/rmt_server/domain/EUCountry.java
+/home/luka/Repos/RMT_D2/RMT_server/src/main/java/com/jelisavacluka554/rmt_server/controllers/UserController.java
 /home/luka/Repos/RMT_D2/RMT_server/src/main/java/com/jelisavacluka554/rmt_server/RMT_server.java
 /home/luka/Repos/RMT_D2/RMT_server/src/main/java/com/jelisavacluka554/rmt_server/ui/MainForm.java
 /home/luka/Repos/RMT_D2/RMT_server/src/main/java/com/jelisavacluka554/rmt_server/domain/User.java

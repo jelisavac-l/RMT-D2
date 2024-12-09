@@ -1,3 +1,9 @@
 # RMT-D2
+![Static Badge](https://img.shields.io/badge/Jelisavac%20L.-2022%2F0554-red)
 
-Java (Maven), Swing UI, PostgreSQL (sa JDBC)
+Domaći zadatak iz predmeta računarske mreže i telekomunikacije.
+
+### Tehn. ⚙️
+* **Logic** : Java (Maven)
+* **UI** : Java (Swing UI + FlatLaf)
+* **DB** : PostgreSQL (w JDBC)

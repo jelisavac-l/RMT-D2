@@ -4,5 +4,6 @@ com/jelisavacluka554/rmt_server/RMT_server.class
 com/jelisavacluka554/rmt_server/domain/EUCountry.class
 com/jelisavacluka554/rmt_server/domain/User.class
 com/jelisavacluka554/rmt_server/ui/MainForm.class
+com/jelisavacluka554/rmt_server/controllers/UserController.class
 com/jelisavacluka554/rmt_server/db/DatabaseConnection.class
 com/jelisavacluka554/rmt_server/domain/Application.class
