@@ -1,10 +1,21 @@
 package com.jelisavacluka554.rmt_server;
 
 import com.formdev.flatlaf.FlatIntelliJLaf;
+import com.jelisavacluka554.rmt_server.communication.Operation;
+import static com.jelisavacluka554.rmt_server.communication.Operation.LOGIN;
+import static com.jelisavacluka554.rmt_server.communication.Operation.REGISTER;
+import static com.jelisavacluka554.rmt_server.communication.Operation.STOP;
+import com.jelisavacluka554.rmt_server.communication.Receiver;
+import com.jelisavacluka554.rmt_server.communication.Request;
+import com.jelisavacluka554.rmt_server.communication.Response;
+import com.jelisavacluka554.rmt_server.communication.Sender;
 import com.jelisavacluka554.rmt_server.controllers.UserController;
 import com.jelisavacluka554.rmt_server.db.DatabaseConnection;
 import com.jelisavacluka554.rmt_server.domain.User;
 import com.jelisavacluka554.rmt_server.ui.MainForm;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -16,36 +27,106 @@ import javax.swing.JFrame;
  *
  * @author luka
  */
-public class RMT_server {
+public class RMT_server extends Thread {
 
     private final int PORT = 9554;
+    private Sender sender;
+    private Receiver receiver;
+    private Socket socket;
 
     public static void main(String[] args) {
-
+        System.out.println("Server started!");
         try {
-            // Setting up a theme
-//        FlatIntelliJLaf.setup();
-
-// Save form in a variable so we can log;
-//        MainForm form = new MainForm();
-//        form.setVisible(true);
-//        form.log("Server started.");
-            List<User> lu = UserController.getAllUsers();
-            
-            for(var u : lu)
-            {
-                System.out.println(u);
-            }
-            
-            
-            
-            
-            
-            
-            
-        } catch (SQLException ex) {
-            Logger.getLogger(RMT_server.class.getName()).log(Level.SEVERE, null, ex);
+            ServerSocket serverSocket = new ServerSocket(9554);
+            Socket socket = serverSocket.accept();
+            RMT_server server = new RMT_server(socket);
+            server.run();
+        } catch (IOException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+    }
+
+    public RMT_server(Socket socket) {
+        this.socket = socket;
+        System.out.println("Initializing a thread for client: " + socket.getInetAddress());
+
+    }
+
+    private synchronized Object executeOperation(Operation operation) {
+        Object result = null;
+        switch (operation) {
+
+            case PING: {
+                System.out.println(socket.getInetAddress() + " pinged.");
+                result = "pong";
+                break;
+            }
+
+            case LOGIN: {
+
+                break;
+            }
+
+            case REGISTER: {
+
+                break;
+            }
+
+            case APPL_GET_LIST: {
+
+                break;
+            }
+
+            case APPL_CREATE: {
+
+                break;
+            }
+
+            case APPL_UPDATE: {
+
+                break;
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public void run() {
+        this.sender = new Sender(socket);
+        this.receiver = new Receiver(socket);
+        Response response = new Response();
+        Object result = null;
+
+        try {
+
+            while (true) {
+                Request request = (Request) receiver.receive();
+
+                // Handling a STOP signal.
+                if (request.getOperation() == Operation.STOP) {
+                    System.out.println("Ending connection with " + socket.getInetAddress());
+                    socket.close();
+                    return;
+                }
+
+                response.setResult(executeOperation(request.getOperation()));
+                try {
+                    sender.send(response);
+                } catch (Exception ex) {
+                    System.err.println(ex.getMessage());
+                }
+                
+                System.out.println(socket.getInetAddress() + " requested " + request.getOperation());
+            }
+        } catch (Exception ex) {
+            System.err.println(ex.getMessage());
+            response.setException(ex);
+            try {
+                    sender.send(response);
+                } catch (Exception ex1) {
+                    System.err.println(ex1.getMessage());
+                }
+        }
     }
 }

@@ -140,12 +140,12 @@ public class ApplicationController {
     }
 
     public static void addApplication(Application a) throws SQLException {
-        
+
         // Add application first
         String query = "INSERT INTO rmt1.application(\n"
                 + "userid, transport, dateofapplication, dateofentry, duration)\n"
                 + "VALUES (?, ?, ?, ?, ?);";
-        
+
         Connection conn = DatabaseConnection.getConnection();
         PreparedStatement ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
         ps.setLong(1, a.getUser().getId());
@@ -153,24 +153,51 @@ public class ApplicationController {
         ps.setDate(3, (Date) a.getDateOfApplication());
         ps.setDate(4, (Date) a.getDateOfEntry());
         ps.setInt(5, a.getDuration());
-        
+
         ps.executeUpdate();
-        
+
         ResultSet rs = ps.getGeneratedKeys();
         Long genId;
-        if(rs.next())
+        if (rs.next()) {
             genId = rs.getLong(1);
-        else throw new SQLException("Something went terribly wrong and if you see this, it is probably unfixable.");
+        } else {
+            throw new SQLException("Something went terribly wrong and if you see this, it is probably unfixable.");
+        }
 
         System.out.println("Application added. Adding items...");
-        
+
         // Then, add items
         var lai = a.getItems();
-        for(var ai : lai) {
+        for (var ai : lai) {
             addApplicationItem(ai);
             System.out.println("\t-> " + ai.getCountry().getName());
         }
-        
+
         System.out.println("Items added.");
+    }
+
+    /**
+     * Overwrites application apl1 with data from apl2.
+     * @param apl1 old application
+     * @param apl2 new application
+     * @throws SQLException 
+     */
+    public static void updateApplication(Application apl1, Application apl2) throws SQLException {
+        String query = "UPDATE rmt1.application\n"
+                + "SET transport=?, dateofapplication=?, dateofentry=?, duration=?\n"
+                + "WHERE application.id=?;";
+        
+        Connection conn = DatabaseConnection.getConnection();
+        PreparedStatement ps = conn.prepareStatement(query);
+        
+        ps.setLong(1, apl2.getTransport().getId());
+        ps.setDate(2, (Date) apl2.getDateOfApplication());
+        ps.setDate(3, (Date) apl2.getDateOfEntry());
+        ps.setInt(4, apl2.getDuration());
+        ps.setLong(5, apl1.getId());
+        
+        ps.executeUpdate();
+        
+        System.out.println("Application " + apl1.getId() + " updated.");
     }
 }
