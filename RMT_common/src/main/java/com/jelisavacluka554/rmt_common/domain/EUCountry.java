@@ -1,14 +1,14 @@
-package com.jelisavacluka554.rmt_server.domain;
+package com.jelisavacluka554.rmt_common.domain;
 
 /**
  *
  * @author luka
  */
-public class Transport {
+public class EUCountry {
     private Long id;
     private String name;
 
-    public Transport(Long id, String name) {
+    public EUCountry(Long id, String name) {
         this.id = id;
         this.name = name;
     }
@@ -31,7 +31,7 @@ public class Transport {
 
     @Override
     public String toString() {
-        return "Transport{" + "id=" + id + ", name=" + name + '}';
+        return "EUCountry{" + "name=" + name + '}';
     }
     
     

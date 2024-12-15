@@ -1,4 +1,4 @@
-package com.jelisavacluka554.rmt_server.communication;
+package com.jelisavacluka554.rmt_common.communication;
 
 import java.io.Serializable;
 

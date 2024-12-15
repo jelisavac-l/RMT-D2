@@ -1,4 +1,4 @@
-package com.jelisavacluka554.rmt_server.domain;
+package com.jelisavacluka554.rmt_common.domain;
 
 import java.util.Date;
 import java.util.List;

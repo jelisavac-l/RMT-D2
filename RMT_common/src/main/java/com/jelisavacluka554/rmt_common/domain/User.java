@@ -1,10 +1,12 @@
-package com.jelisavacluka554.rmt_server.domain;
+package com.jelisavacluka554.rmt_common.domain;
+
+import java.io.Serializable;
 
 /**
  *
  * @author luka
  */
-public class User {
+public class User implements Serializable {
     
     private Long id;
     private String firstName;

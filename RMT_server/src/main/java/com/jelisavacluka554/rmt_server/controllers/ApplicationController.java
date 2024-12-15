@@ -1,11 +1,11 @@
 package com.jelisavacluka554.rmt_server.controllers;
 
 import com.jelisavacluka554.rmt_server.db.DatabaseConnection;
-import com.jelisavacluka554.rmt_server.domain.Application;
-import com.jelisavacluka554.rmt_server.domain.ApplicationItem;
-import com.jelisavacluka554.rmt_server.domain.EUCountry;
-import com.jelisavacluka554.rmt_server.domain.Transport;
-import com.jelisavacluka554.rmt_server.domain.User;
+import com.jelisavacluka554.rmt_common.domain.Application;
+import com.jelisavacluka554.rmt_common.domain.ApplicationItem;
+import com.jelisavacluka554.rmt_common.domain.EUCountry;
+import com.jelisavacluka554.rmt_common.domain.Transport;
+import com.jelisavacluka554.rmt_common.domain.User;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;

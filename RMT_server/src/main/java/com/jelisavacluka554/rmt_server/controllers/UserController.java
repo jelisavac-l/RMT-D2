@@ -1,7 +1,7 @@
 package com.jelisavacluka554.rmt_server.controllers;
 
 import com.jelisavacluka554.rmt_server.db.DatabaseConnection;
-import com.jelisavacluka554.rmt_server.domain.User;
+import com.jelisavacluka554.rmt_common.domain.User;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

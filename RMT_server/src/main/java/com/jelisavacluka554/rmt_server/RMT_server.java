@@ -1,17 +1,14 @@
 package com.jelisavacluka554.rmt_server;
 
+import com.jelisavacluka554.rmt_common.communication.Request;
+import com.jelisavacluka554.rmt_common.communication.Operation;
+import com.jelisavacluka554.rmt_common.communication.Receiver;
+import com.jelisavacluka554.rmt_common.communication.Response;
+import com.jelisavacluka554.rmt_common.communication.Sender;
 import com.formdev.flatlaf.FlatIntelliJLaf;
-import com.jelisavacluka554.rmt_server.communication.Operation;
-import static com.jelisavacluka554.rmt_server.communication.Operation.LOGIN;
-import static com.jelisavacluka554.rmt_server.communication.Operation.REGISTER;
-import static com.jelisavacluka554.rmt_server.communication.Operation.STOP;
-import com.jelisavacluka554.rmt_server.communication.Receiver;
-import com.jelisavacluka554.rmt_server.communication.Request;
-import com.jelisavacluka554.rmt_server.communication.Response;
-import com.jelisavacluka554.rmt_server.communication.Sender;
-import com.jelisavacluka554.rmt_server.controllers.UserController;
+import com.jelisavacluka554.rmt_server.controllers.*;
 import com.jelisavacluka554.rmt_server.db.DatabaseConnection;
-import com.jelisavacluka554.rmt_server.domain.User;
+import com.jelisavacluka554.rmt_common.domain.User;
 import com.jelisavacluka554.rmt_server.ui.MainForm;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -53,9 +50,9 @@ public class RMT_server extends Thread {
 
     }
 
-    private synchronized Object executeOperation(Operation operation) {
+    private synchronized Object handleRequest(Request request) throws SQLException, Exception {
         Object result = null;
-        switch (operation) {
+        switch (request.getOperation()) {
 
             case PING: {
                 System.out.println(socket.getInetAddress() + " pinged.");
@@ -64,7 +61,12 @@ public class RMT_server extends Thread {
             }
 
             case LOGIN: {
-
+                User user = (User) request.getArgument();
+                System.out.println(user.getUsername() + " " + user.getPassword());
+                User found = UserController.getUserFromCredentials(user.getUsername(), user.getPassword());
+                if(found == null) {
+                    throw new Exception("User not found!");
+                } else result = found;
                 break;
             }
 
@@ -110,7 +112,7 @@ public class RMT_server extends Thread {
                     return;
                 }
 
-                response.setResult(executeOperation(request.getOperation()));
+                response.setResult(handleRequest(request));
                 try {
                     sender.send(response);
                 } catch (Exception ex) {
