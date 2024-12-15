@@ -8,3 +8,8 @@ Domaći zadatak iz predmeta računarske mreže i telekomunikacije.
 * **Logic** : Java (Maven)
 * **UI** : Java (Swing UI + FlatLaf)
 * **DB** : PostgreSQL (w JDBC)
+
+### Copyright
+>Molim sve kolege koji koriste ovaj repozitorijum da to čine diskretno, kako bismo izbegli potencijalne negativne posledice za sve nas. 
+
+Projekat je licenciran pod Apache 2.0 licencom.
