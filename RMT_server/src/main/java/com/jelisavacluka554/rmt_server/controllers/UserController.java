@@ -55,7 +55,7 @@ public class UserController {
     public static void addUser(User u) throws SQLException {
         String query = "INSERT INTO rmt1.users(\n"
                 + "firstname, lastname, jmbg, passport, username, pass)\n"
-                + "VALUES (?, ?, ?, ?, ?, ?)";
+                + "VALUES (?, ?, ?, ?, ?, ?);";
         
         Connection conn = DatabaseConnection.getConnection();
         PreparedStatement ps = conn.prepareStatement(query);
@@ -66,12 +66,18 @@ public class UserController {
         ps.setString(4, u.getPassport());
         ps.setString(5, u.getUsername());
         ps.setString(6, u.getPassword());
-        
+        System.out.println(ps);
         ps.executeUpdate();
         
     }
     
-    
+    /** Only to be used for logging in.
+     * 
+     * @param username
+     * @param password
+     * @return User object (if exists)
+     * @throws SQLException if credentials don't match.
+     */
     public static User getUserFromCredentials(String username, String password) throws SQLException {
         
         User found = null;

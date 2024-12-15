@@ -76,7 +76,7 @@ public class RMT_server extends Thread {
 
             case LOGIN: {
                 User user = (User) request.getArgument();
-                System.out.println(user.getUsername() + " " + user.getPassword());
+                System.out.println("Authentication for: " + user.getUsername() + " " + user.getPassword());
                 User found = UserController.getUserFromCredentials(user.getUsername(), user.getPassword());
                 if(found == null) {
                     throw new Exception("User not found!");
@@ -85,7 +85,17 @@ public class RMT_server extends Thread {
             }
 
             case REGISTER: {
-
+                User user = (User) request.getArgument();
+                System.out.println(user);
+                System.out.println("Registering a new user.");
+                try{
+                    UserController.addUser(user);
+                } catch (Exception ex) {
+                    System.err.println(ex.getMessage());
+                    throw new Exception("Registration failed.");
+                } finally {
+                    result = user + " added.";
+                }
                 break;
             }
 

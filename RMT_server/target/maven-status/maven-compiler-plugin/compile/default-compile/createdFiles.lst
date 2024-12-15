@@ -5,6 +5,5 @@ com/jelisavacluka554/rmt_server/ui/MainForm.class
 com/jelisavacluka554/rmt_server/controllers/EUCountryController.class
 com/jelisavacluka554/rmt_server/controllers/TransportController.class
 com/jelisavacluka554/rmt_server/controllers/ApplicationController.class
-com/jelisavacluka554/rmt_server/controllers/Country.class
 com/jelisavacluka554/rmt_server/controllers/UserController.class
 com/jelisavacluka554/rmt_server/db/DatabaseConnection.class
