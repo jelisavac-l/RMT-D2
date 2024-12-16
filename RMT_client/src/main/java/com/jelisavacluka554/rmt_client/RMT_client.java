@@ -30,6 +30,33 @@ public class RMT_client {
     private static Receiver receiver;
 
     public static void main(String[] args) throws Exception {
+        socket = new Socket("127.0.0.1", 9554);
+        sender = new Sender(socket);
+        receiver = new Receiver(socket);
         
+        pingServer();
+        login("admin", "admin");
+        
+        // safely disconnect
+        sender.send(new Request(Operation.STOP, null));
+        
+    }
+    
+    // TEST METHODS
+    
+    // Testing PING
+    public static void pingServer() throws Exception {
+        sender.send(new Request(Operation.PING, null));
+        Response response = (Response) receiver.receive();
+        System.out.println(response.getResult());
+    }
+    
+    public static void login(String username, String password) throws Exception {
+        User user = new User(null, null, null, null, null, username, password);
+        Request request = new Request(Operation.LOGIN, user);
+        sender.send(request);
+        Response response = (Response) receiver.receive();
+        User newUser = (User) response.getResult();
+        System.out.println(newUser);
     }
 }

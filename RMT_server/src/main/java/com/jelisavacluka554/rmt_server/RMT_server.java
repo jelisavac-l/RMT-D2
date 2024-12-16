@@ -69,7 +69,6 @@ public class RMT_server extends Thread {
         switch (request.getOperation()) {
 
             case PING: {
-                System.out.println(socket.getInetAddress() + " pinged.");
                 result = "pong";
                 break;
             }
