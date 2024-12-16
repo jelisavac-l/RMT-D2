@@ -127,6 +127,7 @@ public class RMT_server extends Thread {
 
             while (true) {
                 Request request = (Request) receiver.receive();
+                response = new Response();
 
                 // Handling a STOP signal.
                 if (request.getOperation() == Operation.STOP) {
@@ -134,9 +135,16 @@ public class RMT_server extends Thread {
                     socket.close();
                     return;
                 }
+                
+                try{
+                    result = handleRequest(request);
+                } catch (Exception e) {
+                    response.setException(e);
+                }
 
-                response.setResult(handleRequest(request));
-                try {
+                response.setResult(result);
+                
+                try {    
                     sender.send(response);
                 } catch (Exception ex) {
                     System.err.println(ex.getMessage());

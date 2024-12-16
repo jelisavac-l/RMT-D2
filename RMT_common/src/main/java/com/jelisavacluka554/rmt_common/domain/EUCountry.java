@@ -1,10 +1,12 @@
 package com.jelisavacluka554.rmt_common.domain;
 
+import java.io.Serializable;
+
 /**
  *
  * @author luka
  */
-public class EUCountry {
+public class EUCountry implements Serializable {
     private Long id;
     private String name;
 

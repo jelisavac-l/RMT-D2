@@ -1,5 +1,6 @@
 package com.jelisavacluka554.rmt_common.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -7,7 +8,7 @@ import java.util.List;
  *
  * @author luka
  */
-public class Application {
+public class Application implements Serializable {
     private Long id;
     private User user;
     private Transport transport;

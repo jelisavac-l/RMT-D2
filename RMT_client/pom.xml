@@ -12,6 +12,13 @@
         <exec.mainClass>com.jelisavacluka554.rmt_client.RMT_client</exec.mainClass>
     </properties>
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/com.formdev/flatlaf -->
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf</artifactId>
+            <version>3.5.3</version>
+            <type>jar</type>
+        </dependency>
         <dependency>
             <groupId>com.jelisavacluka554</groupId>
             <artifactId>RMT_common</artifactId>
