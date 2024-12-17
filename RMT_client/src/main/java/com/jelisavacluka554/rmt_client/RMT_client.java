@@ -78,4 +78,18 @@ public class RMT_client {
         System.out.println(newUser);
         return newUser;
     }
+    
+    public static boolean register(User user) throws Exception {
+        Request request = new Request(Operation.REGISTER, user);
+        sender.send(request);
+        Response response = (Response) receiver.receive();
+        if (response.getException() != null) {
+            JOptionPane.showMessageDialog(null, response.getException().getMessage(), "System", JOptionPane.ERROR_MESSAGE);
+            return false;
+        } else {
+            JOptionPane.showMessageDialog(null, user + " has been registered!", "System", JOptionPane.INFORMATION_MESSAGE);
+            return true;
+        }
+        
+    }
 }

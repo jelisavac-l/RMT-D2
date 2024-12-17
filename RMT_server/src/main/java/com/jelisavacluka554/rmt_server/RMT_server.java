@@ -20,6 +20,7 @@ import com.jelisavacluka554.rmt_common.communication.Receiver;
 import com.jelisavacluka554.rmt_common.communication.Response;
 import com.jelisavacluka554.rmt_common.communication.Sender;
 import com.formdev.flatlaf.FlatIntelliJLaf;
+import com.jelisavacluka554.rmt_common.domain.Application;
 import com.jelisavacluka554.rmt_server.controllers.*;
 import com.jelisavacluka554.rmt_server.db.DatabaseConnection;
 import com.jelisavacluka554.rmt_common.domain.User;
@@ -91,7 +92,7 @@ public class RMT_server extends Thread {
                     UserController.addUser(user);
                 } catch (Exception ex) {
                     System.err.println(ex.getMessage());
-                    throw new Exception("Registration failed.");
+                    throw new Exception("Registration failed: " + ex.getMessage());
                 } finally {
                     result = user + " added.";
                 }
@@ -99,12 +100,14 @@ public class RMT_server extends Thread {
             }
 
             case APPL_GET_LIST: {
-
+                
+                
                 break;
             }
 
             case APPL_CREATE: {
-
+                Application application = (Application) request.getArgument();
+                ApplicationController.addApplication(application);
                 break;
             }
 
