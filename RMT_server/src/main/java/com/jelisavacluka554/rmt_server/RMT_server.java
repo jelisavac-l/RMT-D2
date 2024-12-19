@@ -32,6 +32,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.List;
 import javax.swing.JFrame;
 
 /**
@@ -58,9 +59,9 @@ public class RMT_server extends Thread {
 
                 //Check if there is a free thread
                 for (int i = 0; i < clientThreads.length; i++) {
-                    if (clientThreads[i] == null) {
+                    if (clientThreads[i] == null || !clientThreads[i].isAlive()) {
                         clientThreads[i] = new RMT_server(socket);
-                        clientThreads[i].run();
+                        clientThreads[i].start();
                         break;
                     }
                     System.err.println("Error: 0 threads available.");
@@ -100,6 +101,11 @@ public class RMT_server extends Thread {
                 result = "pong";
                 break;
             }
+            
+            case MSG: {
+                System.out.println(request.getArgument());
+                break;
+            }
 
             case LOGIN: {
                 User user = (User) request.getArgument();
@@ -134,7 +140,9 @@ public class RMT_server extends Thread {
             }
 
             case APPL_GET_LIST: {
-
+                User user = (User) request.getArgument();
+                List<Application> la = ApplicationController.getAllApplications(user);
+                result = la;
                 break;
             }
 
