@@ -11,7 +11,6 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
-
 package com.jelisavacluka554.rmt_server;
 
 import com.jelisavacluka554.rmt_common.communication.Request;
@@ -47,12 +46,30 @@ public class RMT_server extends Thread {
     private Socket socket;
 
     public static void main(String[] args) {
-        System.out.println("Server started!");
+        System.out.println("Setting up...");
         try {
             ServerSocket serverSocket = new ServerSocket(9554);
-            Socket socket = serverSocket.accept();
-            RMT_server server = new RMT_server(socket);
-            server.run();
+            System.out.println("Server started at port: " + serverSocket.getLocalPort());
+            RMT_server[] clientThreads = new RMT_server[10];
+
+            while (true) {
+                Socket socket = serverSocket.accept();
+                System.out.println("Accepting a new connection.");
+
+                //Check if there is a free thread
+                for (int i = 0; i < clientThreads.length; i++) {
+                    if (clientThreads[i] == null) {
+                        clientThreads[i] = new RMT_server(socket);
+                        clientThreads[i].run();
+                        break;
+                    }
+                    System.err.println("Error: 0 threads available.");
+
+                }
+            }
+
+//            RMT_server server = new RMT_server(socket);
+//            server.run();
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -65,6 +82,16 @@ public class RMT_server extends Thread {
 
     }
 
+    /**
+     * A method for managing incoming requests. Any thrown exceptions shall be
+     * included in the exception parameter of the {@link Response} object and
+     * transmitted to the client, signifying a failure in the operation.
+     *
+     * @param request
+     * @return result of the requested operation.
+     * @throws SQLException
+     * @throws Exception
+     */
     private synchronized Object handleRequest(Request request) throws SQLException, Exception {
         Object result = null;
         switch (request.getOperation()) {
@@ -78,17 +105,24 @@ public class RMT_server extends Thread {
                 User user = (User) request.getArgument();
                 System.out.println("Authentication for: " + user.getUsername() + " " + user.getPassword());
                 User found = UserController.getUserFromCredentials(user.getUsername(), user.getPassword());
-                if(found == null) {
+                if (found == null) {
                     throw new Exception("User not found!");
-                } else result = found;
+                } else {
+                    result = found;
+                }
                 break;
             }
 
             case REGISTER: {
                 User user = (User) request.getArgument();
                 System.out.println(user);
+
+                if (!validateUser(user)) {
+                    throw new Exception("Incorrect credentials!");
+                }
+
                 System.out.println("Registering a new user.");
-                try{
+                try {
                     UserController.addUser(user);
                 } catch (Exception ex) {
                     System.err.println(ex.getMessage());
@@ -100,8 +134,7 @@ public class RMT_server extends Thread {
             }
 
             case APPL_GET_LIST: {
-                
-                
+
                 break;
             }
 
@@ -131,6 +164,7 @@ public class RMT_server extends Thread {
             while (true) {
                 Request request = (Request) receiver.receive();
                 response = new Response();
+                System.out.println(socket.getInetAddress() + " requested " + request.getOperation());
 
                 // Handling a STOP signal.
                 if (request.getOperation() == Operation.STOP) {
@@ -138,31 +172,35 @@ public class RMT_server extends Thread {
                     socket.close();
                     return;
                 }
-                
-                try{
+
+                try {
                     result = handleRequest(request);
                 } catch (Exception e) {
                     response.setException(e);
                 }
 
                 response.setResult(result);
-                
-                try {    
+
+                try {
                     sender.send(response);
                 } catch (Exception ex) {
                     System.err.println(ex.getMessage());
                 }
-                
-                System.out.println(socket.getInetAddress() + " requested " + request.getOperation());
+
             }
         } catch (Exception ex) {
             System.err.println(ex.getMessage());
             response.setException(ex);
             try {
-                    sender.send(response);
-                } catch (Exception ex1) {
-                    System.err.println(ex1.getMessage());
-                }
+                sender.send(response);
+            } catch (Exception ex1) {
+                System.err.println(ex1.getMessage());
+            }
         }
+    }
+
+    private boolean validateUser(User user) {
+        return true;
+        // Do validation later.
     }
 }
