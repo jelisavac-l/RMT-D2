@@ -1,6 +1,7 @@
 package com.jelisavacluka554.rmt_common.domain;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  *
@@ -15,6 +16,26 @@ public class User implements Serializable {
     private String passport;
     private String username;
     private String password;
+    private Date birthday;
+
+    public Date getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
+    
+    public User(Long id, String firstName, String lastName, String jmbg, String passport, String username, String password, Date birtday) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.jmbg = jmbg;
+        this.passport = passport;
+        this.username = username;
+        this.password = password;
+        this.birthday = birtday;
+    }
 
     public User(Long id, String firstName, String lastName, String jmbg, String passport, String username, String password) {
         this.id = id;

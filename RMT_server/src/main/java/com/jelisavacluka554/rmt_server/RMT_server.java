@@ -51,26 +51,26 @@ public class RMT_server extends Thread {
         try {
             ServerSocket serverSocket = new ServerSocket(9554);
             System.out.println("Server started at port: " + serverSocket.getLocalPort());
-            RMT_server[] clientThreads = new RMT_server[10];
+//            RMT_server[] clientThreads = new RMT_server[10];
 
             while (true) {
                 Socket socket = serverSocket.accept();
                 System.out.println("Accepting a new connection.");
-
+                
+                new RMT_server(socket).start();
+                
                 //Check if there is a free thread
-                for (int i = 0; i < clientThreads.length; i++) {
-                    if (clientThreads[i] == null || !clientThreads[i].isAlive()) {
-                        clientThreads[i] = new RMT_server(socket);
-                        clientThreads[i].start();
-                        break;
-                    }
-                    System.err.println("Error: 0 threads available.");
-
-                }
+//                for (int i = 0; i < clientThreads.length; i++) {
+//                    if (clientThreads[i] == null || !clientThreads[i].isAlive()) {
+//                        clientThreads[i] = new RMT_server(socket);
+//                        clientThreads[i].start();
+//                        break;
+//                    }
+//                    System.err.println("Error: 0 threads available.");
+//
+//                }
             }
 
-//            RMT_server server = new RMT_server(socket);
-//            server.run();
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -154,6 +154,16 @@ public class RMT_server extends Thread {
 
             case APPL_UPDATE: {
 
+                break;
+            }
+            
+            case EUC_GET_LIST: {
+                
+                break;
+            }
+            
+            case T_GET_LIST: {
+                
                 break;
             }
         }

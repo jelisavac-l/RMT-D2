@@ -19,6 +19,7 @@ import com.jelisavacluka554.rmt_common.domain.*;
 import com.jelisavacluka554.rmt_common.communication.*;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.List;
 import java.util.Scanner;
 import javax.swing.JOptionPane;
 
@@ -31,6 +32,18 @@ public class RMT_client {
     private static Socket socket;
     private static Sender sender;
     private static Receiver receiver;
+    
+    // Primitive audit
+    private static User loggedUser;
+
+    public static User getLoggedUser() {
+        return loggedUser;
+    }
+
+    public static void setLoggedUser(User loggedUser) {
+        if(RMT_client.loggedUser == null)
+            RMT_client.loggedUser = loggedUser;
+    }
 
     public static void main(String[] args) throws Exception {
         FlatIntelliJLaf.setup();
@@ -76,6 +89,7 @@ public class RMT_client {
         }
         User newUser = (User) response.getResult();
         System.out.println(newUser);
+        getApplicationList(newUser);
         return newUser;
     }
     
@@ -91,5 +105,16 @@ public class RMT_client {
             return true;
         }
         
+    }
+    
+    public static List<Application> getApplicationList(User u) throws Exception {
+        Request request = new Request(Operation.APPL_GET_LIST, u);
+        sender.send(request);
+        Response response = (Response) receiver.receive();
+        
+        for(var ux : (List<Application>) response.getResult()) {
+            System.out.println(ux.toString());
+        }
+        return (List<Application>) response.getResult();
     }
 }

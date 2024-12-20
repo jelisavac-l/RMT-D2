@@ -14,6 +14,7 @@ public class FormLogin extends javax.swing.JFrame {
     /**
      * Creates new form FormLogin
      */
+    private boolean doNotStop = false;
     public FormLogin() {
         initComponents();
         this.setLocationRelativeTo(null);
@@ -114,10 +115,18 @@ public class FormLogin extends javax.swing.JFrame {
 
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
         try {
-            // TODO add your handling code here:
             User u = RMT_client.login(txtUser.getText(), pwdPassword.getText());
-            if(u != null)
-                JOptionPane.showMessageDialog(null, u, "System", JOptionPane.INFORMATION_MESSAGE);
+            if (u != null) {
+                JOptionPane.showMessageDialog(null,
+                        u + " logged in.",
+                        "System",
+                        JOptionPane.INFORMATION_MESSAGE);
+                RMT_client.setLoggedUser(u);
+                this.doNotStop = true;
+                this.dispose();
+                new FormMain().setVisible(true);
+            }
+
         } catch (Exception ex) {
             Logger.getLogger(FormLogin.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -125,8 +134,8 @@ public class FormLogin extends javax.swing.JFrame {
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
         try {
-            // TODO add your handling code here:
-            RMT_client.disconnect();
+            if(!doNotStop)
+                RMT_client.disconnect();
         } catch (NullPointerException npx) {
             // In case server refused connection, so there is nothing to disconnect from
         } catch (Exception ex) {
@@ -137,8 +146,8 @@ public class FormLogin extends javax.swing.JFrame {
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         // TODO add your handling code here:
         try {
-            // TODO add your handling code here:
-            RMT_client.disconnect();
+            if(!doNotStop)
+                RMT_client.disconnect();
         } catch (NullPointerException npx) {
             // In case server refused connection, so there is nothing to disconnect from
         } catch (Exception ex) {
@@ -147,14 +156,12 @@ public class FormLogin extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowClosing
 
     private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
-        // TODO add your handling code here:
         new DialogRegister(null, true).setVisible(true);
     }//GEN-LAST:event_jLabel4MouseClicked
 
     /**
      * @param args the command line arguments
      */
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnLogin;

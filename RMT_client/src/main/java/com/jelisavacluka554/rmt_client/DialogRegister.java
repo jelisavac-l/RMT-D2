@@ -1,6 +1,7 @@
 package com.jelisavacluka554.rmt_client;
 
 import com.jelisavacluka554.rmt_common.domain.User;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,6 +17,7 @@ public class DialogRegister extends javax.swing.JDialog {
     public DialogRegister(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        this.setLocationRelativeTo(this);
     }
 
     /**
@@ -36,6 +38,10 @@ public class DialogRegister extends javax.swing.JDialog {
         jLabel1 = new javax.swing.JLabel();
         txtLastName = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
+        txtDay = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        txtMonth = new javax.swing.JTextField();
+        txtYear = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         txtUsername = new javax.swing.JTextField();
@@ -56,21 +62,34 @@ public class DialogRegister extends javax.swing.JDialog {
 
         jLabel4.setText("JMBG:");
 
+        jLabel7.setText("Date of birth:");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel3)
-                    .addComponent(txtPassport)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel2)
-                    .addComponent(txtLastName)
-                    .addComponent(jLabel1)
-                    .addComponent(txtFirstName, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtJMBG, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(txtDay, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtMonth, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtYear))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jLabel3)
+                                .addComponent(txtPassport)
+                                .addComponent(jLabel4)
+                                .addComponent(jLabel2)
+                                .addComponent(txtLastName)
+                                .addComponent(jLabel1)
+                                .addComponent(txtFirstName, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtJMBG, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel7))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -92,7 +111,14 @@ public class DialogRegister extends javax.swing.JDialog {
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtPassport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtDay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtMonth, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtYear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(12, Short.MAX_VALUE))
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Login information"));
@@ -166,7 +192,7 @@ public class DialogRegister extends javax.swing.JDialog {
                 .addComponent(cbAccept)
                 .addGap(18, 18, 18)
                 .addComponent(btnRegister, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -178,6 +204,11 @@ public class DialogRegister extends javax.swing.JDialog {
 
     private void btnRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegisterActionPerformed
         // TODO add validation
+        Date birthday = new Date(
+                Integer.parseInt(txtYear.getText()), 
+                Integer.parseInt(txtMonth.getText()), 
+                Integer.parseInt(txtDay.getText()));
+        
         User user = new User(
                 null,
                 txtFirstName.getText(),
@@ -185,7 +216,8 @@ public class DialogRegister extends javax.swing.JDialog {
                 txtJMBG.getText(),
                 txtPassport.getText(),
                 txtUsername.getText(),
-                txtPassword.getText()
+                txtPassword.getText(),
+                birthday
         );
         System.out.println("Attempting to register " + user);
         try {
@@ -212,13 +244,17 @@ public class DialogRegister extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JTextField txtDay;
     private javax.swing.JTextField txtFirstName;
     private javax.swing.JTextField txtJMBG;
     private javax.swing.JTextField txtLastName;
+    private javax.swing.JTextField txtMonth;
     private javax.swing.JTextField txtPassport;
     private javax.swing.JTextField txtPassword;
     private javax.swing.JTextField txtUsername;
+    private javax.swing.JTextField txtYear;
     // End of variables declaration//GEN-END:variables
 }

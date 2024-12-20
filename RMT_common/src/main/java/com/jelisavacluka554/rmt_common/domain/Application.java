@@ -1,6 +1,9 @@
 package com.jelisavacluka554.rmt_common.domain;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
 import java.util.Date;
 import java.util.List;
 
@@ -42,6 +45,22 @@ public class Application implements Serializable {
         this.dateOfApplication = dateOfApplication;
         this.dateOfEntry = dateOfEntry;
         this.duration = duration;
+    }
+    
+    public String getStatus() {
+        Date today = new Date();
+
+        // Create a Date for two days from now
+        Date twoDaysFromNow = new Date(today.getTime() + 2L * 24 * 60 * 60 * 1000); // 2 days in milliseconds
+
+        // Compare the dates
+        if (dateOfEntry.before(today)) {
+            return "EXECUTED";
+        } else if (!dateOfEntry.before(twoDaysFromNow)) {
+            return "LOCKED IN";
+        } else {
+            return "APPLIED";
+        }
     }
 
     public Long getId() {

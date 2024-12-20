@@ -17,6 +17,7 @@ package com.jelisavacluka554.rmt_server.controllers;
 import com.jelisavacluka554.rmt_server.db.DatabaseConnection;
 import com.jelisavacluka554.rmt_common.domain.User;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -45,7 +46,8 @@ public class UserController {
                     rs.getString(4),
                     rs.getString(5),
                     rs.getString(6),
-                    rs.getString(7)
+                    rs.getString(7),
+                    rs.getDate("birthday")
             ));
         }
 
@@ -54,8 +56,8 @@ public class UserController {
 
     public static void addUser(User u) throws SQLException {
         String query = "INSERT INTO rmt1.users(\n"
-                + "firstname, lastname, jmbg, passport, username, pass)\n"
-                + "VALUES (?, ?, ?, ?, ?, ?);";
+                + "firstname, lastname, jmbg, passport, username, pass, birthday)\n"
+                + "VALUES (?, ?, ?, ?, ?, ?, ?);";
         
         Connection conn = DatabaseConnection.getConnection();
         PreparedStatement ps = conn.prepareStatement(query);
@@ -66,6 +68,7 @@ public class UserController {
         ps.setString(4, u.getPassport());
         ps.setString(5, u.getUsername());
         ps.setString(6, u.getPassword());
+        ps.setDate(7, new java.sql.Date(u.getBirthday().getTime()));
         System.out.println(ps);
         ps.executeUpdate();
         
@@ -95,7 +98,8 @@ public class UserController {
                     rs.getString(4),
                     rs.getString(5),
                     rs.getString(6),
-                    rs.getString(7)
+                    rs.getString(7),
+                    rs.getDate("birthday")
             );
         }
         return found;
