@@ -113,7 +113,8 @@ public class ApplicationController {
                 + "u.id AS uid, u.firstname, u.lastname, u.jmbg, u.passport, u.username, u.pass\n"
                 + "FROM application a\n"
                 + "JOIN transport t ON t.id = a.transport\n"
-                + "JOIN users u ON u.id = a.userid WHERE a.userid=" + u.getId();
+                + "JOIN users u ON u.id = a.userid WHERE a.userid=" + u.getId() + "\n"
+                + "ORDER BY a.dateofentry ASC";
 
         Connection conn = DatabaseConnection.getConnection();
         Statement st = conn.createStatement();
@@ -164,8 +165,9 @@ public class ApplicationController {
         PreparedStatement ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
         ps.setLong(1, a.getUser().getId());
         ps.setLong(2, a.getTransport().getId());
-        ps.setDate(3, (Date) a.getDateOfApplication());
-        ps.setDate(4, (Date) a.getDateOfEntry());
+        System.out.println(a.getDateOfEntry());
+        ps.setDate(3, new Date(a.getDateOfApplication().getTime()));
+        ps.setDate(4, new Date(a.getDateOfEntry().getTime()));
         ps.setInt(5, a.getDuration());
 
         ps.executeUpdate();
@@ -183,6 +185,9 @@ public class ApplicationController {
         // Then, add items
         var lai = a.getItems();
         for (var ai : lai) {
+            
+            // Da mi Gospod Bog oprosti za ovo.
+            ai.setApplication(new Application(genId, null, null, null, null, null));
             addApplicationItem(ai);
             System.out.println("\t-> " + ai.getCountry().getName());
         }

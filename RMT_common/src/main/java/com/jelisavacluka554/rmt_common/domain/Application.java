@@ -56,7 +56,7 @@ public class Application implements Serializable {
         // Compare the dates
         if (dateOfEntry.before(today)) {
             return "EXECUTED";
-        } else if (!dateOfEntry.before(twoDaysFromNow)) {
+        } else if (dateOfEntry.before(twoDaysFromNow)) {
             return "LOCKED IN";
         } else {
             return "APPLIED";

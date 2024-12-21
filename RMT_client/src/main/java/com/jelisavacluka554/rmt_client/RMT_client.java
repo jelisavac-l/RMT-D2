@@ -112,6 +112,9 @@ public class RMT_client {
         for(var ux : (List<Application>) response.getResult()) {
             System.out.println(ux.toString());
         }
+        if (response.getException() != null) {
+            JOptionPane.showMessageDialog(null, response.getException().getMessage(), "System", JOptionPane.ERROR_MESSAGE);
+        }
         return (List<Application>) response.getResult();
     }
     
@@ -119,7 +122,9 @@ public class RMT_client {
         Request request = new Request(Operation.EUC_GET_LIST, null);
         sender.send(request);
         Response response = (Response) receiver.receive();
-        
+        if (response.getException() != null) {
+            JOptionPane.showMessageDialog(null, response.getException().getMessage(), "System", JOptionPane.ERROR_MESSAGE);
+        }
         return (List<EUCountry>) response.getResult();
         
     }
@@ -128,8 +133,19 @@ public class RMT_client {
         Request request = new Request(Operation.T_GET_LIST, null);
         sender.send(request);
         Response response = (Response) receiver.receive();
-        
+        if (response.getException() != null) {
+            JOptionPane.showMessageDialog(null, response.getException().getMessage(), "System", JOptionPane.ERROR_MESSAGE);
+        }
         return (List<Transport>) response.getResult();
-        
+    }
+    
+    public static void createApplication(Application a) throws Exception {
+        Request request = new Request(Operation.APPL_CREATE, a);
+        sender.send(request);
+        Response response = (Response) receiver.receive();
+        if (response.getException() != null) {
+            JOptionPane.showMessageDialog(null, response.getException().getMessage(), "MOLIM TE", JOptionPane.ERROR_MESSAGE);
+        }
+        System.out.println(response.getResult());
     }
 }

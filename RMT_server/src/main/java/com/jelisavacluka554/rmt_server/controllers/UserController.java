@@ -54,6 +54,13 @@ public class UserController {
         return users;
     }
 
+    /**
+     * Method that adds a new user to database. <br>
+     * <b>WARNING</b> this method does <b>NOT</b> check user data, but only adds a new user.
+     * Not to be confused with {@see addUserWithValidation}
+     * @param u New (non-existing) user
+     * @throws SQLException
+     */
     public static void addUser(User u) throws SQLException {
         String query = "INSERT INTO rmt1.users(\n"
                 + "firstname, lastname, jmbg, passport, username, pass, birthday)\n"
@@ -72,6 +79,34 @@ public class UserController {
         System.out.println(ps);
         ps.executeUpdate();
         
+    }
+
+    public static void addUserWithValidation(User u) throws SQLException, IllegalArgumentException {
+
+        // Check passport and JMBG
+        String query = "SELECT * FROM rmt1.users WHERE jmbg=? AND passport=?";
+        Connection conn = DatabaseConnection.getConnection();
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setString(1, u.getJmbg());
+        ps.setString(2, u.getPassport());
+        Long foundID;
+        String username;
+        ResultSet rs = ps.executeQuery();
+        if(rs.next()) {
+            foundID = rs.getLong("id");
+            username = rs.getString("username");
+        } else throw new IllegalArgumentException("Invalid jmbg/passport number.");
+        if(username != null) throw new IllegalStateException("User already exists.");
+
+        // Register user
+        query = "UPDATE TABLE rmt1.users SET username=?, pass=? WHERE id=?";
+        ps = conn.prepareStatement(query);
+        ps.setString(1, u.getUsername());
+        ps.setString(2, u.getPassword());
+        ps.setLong(3, foundID);
+        ps.executeUpdate();
+
+
     }
     
     /** Only to be used for logging in.

@@ -249,6 +249,7 @@ public class FormMain extends javax.swing.JFrame {
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
         // TODO add your handling code here:
         new DialogNewApplication(null, true).setVisible(true);
+        initTable();
     }//GEN-LAST:event_btnAddActionPerformed
 
 

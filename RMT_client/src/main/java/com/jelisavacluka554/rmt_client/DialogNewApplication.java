@@ -1,8 +1,16 @@
 package com.jelisavacluka554.rmt_client;
 
+import com.jelisavacluka554.rmt_common.communication.Operation;
+import com.jelisavacluka554.rmt_common.communication.Request;
+import com.jelisavacluka554.rmt_common.domain.Application;
 import com.jelisavacluka554.rmt_common.domain.ApplicationItem;
 import com.jelisavacluka554.rmt_common.domain.EUCountry;
 import com.jelisavacluka554.rmt_common.domain.Transport;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
@@ -13,7 +21,7 @@ import java.util.logging.Logger;
  * @author luka
  */
 public class DialogNewApplication extends javax.swing.JDialog {
-    
+
     private List<Transport> lt;
     private List<EUCountry> lcAll;
     private List<EUCountry> lcTable;
@@ -25,9 +33,9 @@ public class DialogNewApplication extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         this.setLocationRelativeTo(this);
-        
+
         lcTable = new LinkedList<>();
-        
+
         getData();
         initComboBoxes();
         initTable();
@@ -63,7 +71,6 @@ public class DialogNewApplication extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("New Application");
-        setPreferredSize(new java.awt.Dimension(828, 379));
         setResizable(false);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Countries of visit"));
@@ -123,6 +130,11 @@ public class DialogNewApplication extends javax.swing.JDialog {
         jLabel2.setText("Duration (in days):");
 
         btnSave.setText("Save application");
+        btnSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveActionPerformed(evt);
+            }
+        });
 
         checkFree.setText("Free application?");
         checkFree.setEnabled(false);
@@ -209,13 +221,58 @@ public class DialogNewApplication extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        if(lcTable.contains((EUCountry) cbCountry.getSelectedItem())) {
+        if (lcTable.contains((EUCountry) cbCountry.getSelectedItem())) {
             return;
         }
         lcTable.add((EUCountry) cbCountry.getSelectedItem());
         initTable();
     }//GEN-LAST:event_btnAddActionPerformed
 
+    public static Date asDate(LocalDateTime localDateTime) {
+    return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+  }
+    
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+
+        List<ApplicationItem> items = new LinkedList<>();
+        System.out.println(txtYear.getText() + "" + txtMonth.getText());
+        LocalDateTime dateOfEntry = LocalDateTime.of(
+                Integer.parseInt(txtYear.getText()),
+                Integer.parseInt(txtMonth.getText()),
+                Integer.parseInt(txtDay.getText()),
+                0, 0
+                );
+
+
+        Date dateOfApplication = new Date();
+        
+        Application application = new Application(null,
+                RMT_client.getLoggedUser(), 
+                (Transport) cbTransport.getSelectedItem(),
+                dateOfApplication, 
+                asDate(dateOfEntry), 
+                Integer.parseInt(txtDuration.getText()));
+        
+        System.out.println(dateOfEntry);
+
+        int i = 1;
+        for (var c : lcTable) {
+            System.out.println(i + " " + c);
+            items.add(new ApplicationItem(application, (long) i, c));
+            i++;
+        }
+        
+        application.setItems(items);
+        
+        try {
+            RMT_client.createApplication(application);
+        } catch (Exception ex) {
+            Logger.getLogger(DialogNewApplication.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        this.dispose();
+        
+    }//GEN-LAST:event_btnSaveActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -240,11 +297,11 @@ public class DialogNewApplication extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
 
     private void initComboBoxes() {
-        for(var c : lcAll) {
+        for (var c : lcAll) {
             cbCountry.addItem(c);
         }
-        
-        for(var t : lt) {
+
+        for (var t : lt) {
             cbTransport.addItem(t);
         }
     }

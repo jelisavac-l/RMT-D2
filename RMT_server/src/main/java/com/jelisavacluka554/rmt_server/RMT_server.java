@@ -24,7 +24,9 @@ import com.jelisavacluka554.rmt_server.controllers.*;
 import com.jelisavacluka554.rmt_server.db.DatabaseConnection;
 import com.jelisavacluka554.rmt_common.domain.User;
 import com.jelisavacluka554.rmt_server.ui.MainForm;
+import java.io.EOFException;
 import java.io.IOException;
+import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.Connection;
@@ -51,26 +53,16 @@ public class RMT_server extends Thread {
         try {
             ServerSocket serverSocket = new ServerSocket(9554);
             System.out.println("Server started at port: " + serverSocket.getLocalPort());
-//            RMT_server[] clientThreads = new RMT_server[10];
 
             while (true) {
                 Socket socket = serverSocket.accept();
-                System.out.println("Accepting a new connection.");
+                System.out.println("[M] Accepting a new connection.");
                 
                 new RMT_server(socket).start();
-                
-                //Check if there is a free thread
-//                for (int i = 0; i < clientThreads.length; i++) {
-//                    if (clientThreads[i] == null || !clientThreads[i].isAlive()) {
-//                        clientThreads[i] = new RMT_server(socket);
-//                        clientThreads[i].start();
-//                        break;
-//                    }
-//                    System.err.println("Error: 0 threads available.");
-//
-//                }
             }
 
+        } catch(BindException ex) { 
+            System.err.println("Address is already in use. Stop all other instances of server before start.");
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -129,7 +121,7 @@ public class RMT_server extends Thread {
 
                 System.out.println("Registering a new user.");
                 try {
-                    UserController.addUser(user);
+                    UserController.addUserWithValidation(user);
                 } catch (Exception ex) {
                     System.err.println(ex.getMessage());
                     throw new Exception("Registration failed: " + ex.getMessage());
@@ -147,8 +139,14 @@ public class RMT_server extends Thread {
             }
 
             case APPL_CREATE: {
+                try{
                 Application application = (Application) request.getArgument();
+                System.out.println(application.getItems());
                 ApplicationController.addApplication(application);
+                result = "OK";
+                } catch (Exception e) {
+                    throw new Exception(e.getMessage());
+                }
                 break;
             }
 
@@ -182,9 +180,10 @@ public class RMT_server extends Thread {
         try {
 
             while (true) {
+                
                 Request request = (Request) receiver.receive();
                 response = new Response();
-                System.out.println(socket.getInetAddress() + " requested " + request.getOperation());
+                System.out.println( "[" + this.getId() + "] " + socket.getInetAddress().toString().substring(1) + " requested " + request.getOperation());
 
                 // Handling a STOP signal.
                 if (request.getOperation() == Operation.STOP) {
@@ -208,6 +207,8 @@ public class RMT_server extends Thread {
                 }
 
             }
+        } catch(EOFException ex) {
+            System.err.println("Connection ended prematurely.");
         } catch (Exception ex) {
             System.err.println(ex.getMessage());
             response.setException(ex);
