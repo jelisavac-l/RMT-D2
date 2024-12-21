@@ -33,7 +33,7 @@ public class Transport implements Serializable {
 
     @Override
     public String toString() {
-        return "Transport{" + "id=" + id + ", name=" + name + '}';
+        return name;
     }
     
     

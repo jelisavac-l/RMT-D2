@@ -83,6 +83,11 @@ public class FormMain extends javax.swing.JFrame {
         btnAdd.setFont(new java.awt.Font("sansserif", 1, 13)); // NOI18N
         btnAdd.setForeground(new java.awt.Color(0, 51, 153));
         btnAdd.setText("New application");
+        btnAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -240,6 +245,11 @@ public class FormMain extends javax.swing.JFrame {
             Logger.getLogger(FormLogin.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_formWindowClosed
+
+    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
+        // TODO add your handling code here:
+        new DialogNewApplication(null, true).setVisible(true);
+    }//GEN-LAST:event_btnAddActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -70,8 +70,6 @@ public class RMT_client {
         System.out.println("Disconnected!");
     }
 
-    // TEST METHODS
-
     public static void pingServer() throws Exception {
         sender.send(new Request(Operation.PING, null));
         Response response = (Response) receiver.receive();
@@ -104,7 +102,6 @@ public class RMT_client {
             JOptionPane.showMessageDialog(null, user + " has been registered!", "System", JOptionPane.INFORMATION_MESSAGE);
             return true;
         }
-        
     }
     
     public static List<Application> getApplicationList(User u) throws Exception {
@@ -116,5 +113,23 @@ public class RMT_client {
             System.out.println(ux.toString());
         }
         return (List<Application>) response.getResult();
+    }
+    
+    public static List<EUCountry> getEUCountryList() throws Exception {
+        Request request = new Request(Operation.EUC_GET_LIST, null);
+        sender.send(request);
+        Response response = (Response) receiver.receive();
+        
+        return (List<EUCountry>) response.getResult();
+        
+    }
+    
+    public static List<Transport> getTransportList() throws Exception {
+        Request request = new Request(Operation.T_GET_LIST, null);
+        sender.send(request);
+        Response response = (Response) receiver.receive();
+        
+        return (List<Transport>) response.getResult();
+        
     }
 }

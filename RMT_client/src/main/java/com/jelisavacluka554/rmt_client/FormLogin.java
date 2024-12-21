@@ -117,10 +117,6 @@ public class FormLogin extends javax.swing.JFrame {
         try {
             User u = RMT_client.login(txtUser.getText(), pwdPassword.getText());
             if (u != null) {
-                JOptionPane.showMessageDialog(null,
-                        u + " logged in.",
-                        "System",
-                        JOptionPane.INFORMATION_MESSAGE);
                 RMT_client.setLoggedUser(u);
                 this.doNotStop = true;
                 this.dispose();

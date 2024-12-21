@@ -33,7 +33,7 @@ public class EUCountry implements Serializable {
 
     @Override
     public String toString() {
-        return "EUCountry{" + "name=" + name + '}';
+        return name;
     }
     
     

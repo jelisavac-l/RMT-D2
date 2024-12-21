@@ -40,6 +40,12 @@ public class ApplicationItem implements Serializable {
     public void setCountry(EUCountry country) {
         this.country = country;
     }
+
+    @Override
+    public String toString() {
+        return country.getName().substring(0, 3).toUpperCase();
+    }
+    
     
     
 }

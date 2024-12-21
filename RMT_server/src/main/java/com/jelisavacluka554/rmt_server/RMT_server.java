@@ -158,12 +158,14 @@ public class RMT_server extends Thread {
             }
             
             case EUC_GET_LIST: {
-                
+                // TODO: handle excepts.
+                result = EUCountryController.getAllEUCountries();
                 break;
             }
             
             case T_GET_LIST: {
-                
+                // TODO: handle excepts.
+                result = TransportController.getAllTransports();
                 break;
             }
         }
