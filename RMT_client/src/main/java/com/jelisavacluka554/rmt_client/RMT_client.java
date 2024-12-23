@@ -19,6 +19,7 @@ import com.jelisavacluka554.rmt_common.domain.*;
 import com.jelisavacluka554.rmt_common.communication.*;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
@@ -33,7 +34,7 @@ public class RMT_client {
     private static Socket socket;
     private static Sender sender;
     private static Receiver receiver;
-    
+
     // Primitive audit
     private static User loggedUser;
 
@@ -42,8 +43,9 @@ public class RMT_client {
     }
 
     public static void setLoggedUser(User loggedUser) {
-        if(RMT_client.loggedUser == null)
+        if (RMT_client.loggedUser == null) {
             RMT_client.loggedUser = loggedUser;
+        }
     }
 
     public static void main(String[] args) throws Exception {
@@ -55,111 +57,168 @@ public class RMT_client {
             new FormLogin().setVisible(true);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, e.getMessage(), "System", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
         }
 
     }
 
     private static void init() throws IOException {
-        socket = new Socket("127.0.0.1", 9554);
-        sender = new Sender(socket);
-        receiver = new Receiver(socket);
+        try {
+            socket = new Socket("127.0.0.1", 9554);
+            sender = new Sender(socket);
+            receiver = new Receiver(socket);
+        } catch (SocketException e) {
+            JOptionPane.showMessageDialog(null, "Connection refused.", "System", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
+        }
     }
 
     public static void disconnect() throws Exception {
-        System.out.println("Disconnectiong...");
-        sender.send(new Request(Operation.STOP, null));
-        System.out.println("Disconnected!");
+        try {
+            System.out.println("Disconnectiong...");
+            sender.send(new Request(Operation.STOP, null));
+            System.out.println("Disconnected!");
+        } catch (SocketException e) {
+            JOptionPane.showMessageDialog(null, "Connection refused.", "System", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
+        }
     }
 
     public static void pingServer() throws Exception {
-        sender.send(new Request(Operation.PING, null));
-        Response response = (Response) receiver.receive();
-        System.out.println(response.getResult());
+        try {
+            sender.send(new Request(Operation.PING, null));
+            Response response = (Response) receiver.receive();
+            System.out.println(response.getResult());
+        }  catch (SocketException e) {
+        JOptionPane.showMessageDialog(null, "Connection refused.", "System", JOptionPane.ERROR_MESSAGE);
+        System.exit(1);
+        }
     }
+   
 
     public static User login(String username, String password) throws Exception {
-        User user = new User(null, null, null, null, null, username, password);
-        Request request = new Request(Operation.LOGIN, user);
-        sender.send(request);
-        Response response = (Response) receiver.receive();
-        if (response.getException() != null) {
-            JOptionPane.showMessageDialog(null, response.getException().getMessage(), "System", JOptionPane.ERROR_MESSAGE);
-            return null;
+        try {
+            User user = new User(null, null, null, null, null, username, password);
+            Request request = new Request(Operation.LOGIN, user);
+            sender.send(request);
+            Response response = (Response) receiver.receive();
+            if (response.getException() != null) {
+                JOptionPane.showMessageDialog(null, response.getException().getMessage(), "System", JOptionPane.ERROR_MESSAGE);
+                return null;
+            }
+            User newUser = (User) response.getResult();
+            System.out.println(newUser);
+            getApplicationList(newUser);
+            return newUser;
+        } catch (SocketException e) {
+            JOptionPane.showMessageDialog(null, "Connection refused.", "System", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
         }
-        User newUser = (User) response.getResult();
-        System.out.println(newUser);
-        getApplicationList(newUser);
-        return newUser;
+        return null;
     }
-    
+
     public static boolean register(User user) throws Exception {
-        Request request = new Request(Operation.REGISTER, user);
-        sender.send(request);
-        Response response = (Response) receiver.receive();
-        if (response.getException() != null) {
-            JOptionPane.showMessageDialog(null, response.getException().getMessage(), "System", JOptionPane.ERROR_MESSAGE);
-            return false;
-        } else {
-            JOptionPane.showMessageDialog(null, user + " has been registered!", "System", JOptionPane.INFORMATION_MESSAGE);
-            return true;
+        try {
+            Request request = new Request(Operation.REGISTER, user);
+            sender.send(request);
+            Response response = (Response) receiver.receive();
+            if (response.getException() != null) {
+                JOptionPane.showMessageDialog(null, response.getException().getMessage(), "System", JOptionPane.ERROR_MESSAGE);
+                return false;
+            } else {
+                JOptionPane.showMessageDialog(null, user + " has been registered!", "System", JOptionPane.INFORMATION_MESSAGE);
+                return true;
+            }
+        } catch (SocketException e) {
+            JOptionPane.showMessageDialog(null, "Connection refused.", "System", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
         }
+        return false;
     }
-    
+
     public static List<Application> getApplicationList(User u) throws Exception {
-        Request request = new Request(Operation.APPL_GET_LIST, u);
-        sender.send(request);
-        Response response = (Response) receiver.receive();
-        
-        for(var ux : (List<Application>) response.getResult()) {
-            System.out.println(ux.toString());
+        try {
+            Request request = new Request(Operation.APPL_GET_LIST, u);
+            sender.send(request);
+            Response response = (Response) receiver.receive();
+
+            for (var ux : (List<Application>) response.getResult()) {
+                System.out.println(ux.toString());
+            }
+            if (response.getException() != null) {
+                JOptionPane.showMessageDialog(null, response.getException().getMessage(), "System", JOptionPane.ERROR_MESSAGE);
+            }
+            return (List<Application>) response.getResult();
+        } catch (SocketException e) {
+            JOptionPane.showMessageDialog(null, "Connection refused.", "System", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
         }
-        if (response.getException() != null) {
-            JOptionPane.showMessageDialog(null, response.getException().getMessage(), "System", JOptionPane.ERROR_MESSAGE);
-        }
-        return (List<Application>) response.getResult();
+        return null;
     }
-    
+
     public static List<EUCountry> getEUCountryList() throws Exception {
-        Request request = new Request(Operation.EUC_GET_LIST, null);
-        sender.send(request);
-        Response response = (Response) receiver.receive();
-        if (response.getException() != null) {
-            JOptionPane.showMessageDialog(null, response.getException().getMessage(), "System", JOptionPane.ERROR_MESSAGE);
+        try {
+            Request request = new Request(Operation.EUC_GET_LIST, null);
+            sender.send(request);
+            Response response = (Response) receiver.receive();
+            if (response.getException() != null) {
+                JOptionPane.showMessageDialog(null, response.getException().getMessage(), "System", JOptionPane.ERROR_MESSAGE);
+            }
+            return (List<EUCountry>) response.getResult();
+        } catch (SocketException e) {
+            JOptionPane.showMessageDialog(null, "Connection refused.", "System", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
         }
-        return (List<EUCountry>) response.getResult();
-        
+        return null;
+
     }
-    
+
     public static List<Transport> getTransportList() throws Exception {
-        Request request = new Request(Operation.T_GET_LIST, null);
-        sender.send(request);
-        Response response = (Response) receiver.receive();
-        if (response.getException() != null) {
-            JOptionPane.showMessageDialog(null, response.getException().getMessage(), "System", JOptionPane.ERROR_MESSAGE);
+        try {
+            Request request = new Request(Operation.T_GET_LIST, null);
+            sender.send(request);
+            Response response = (Response) receiver.receive();
+            if (response.getException() != null) {
+                JOptionPane.showMessageDialog(null, response.getException().getMessage(), "System", JOptionPane.ERROR_MESSAGE);
+            }
+            return (List<Transport>) response.getResult();
+        } catch (SocketException e) {
+            JOptionPane.showMessageDialog(null, "Connection refused.", "System", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
         }
-        return (List<Transport>) response.getResult();
+        return null;
     }
-    
+
     public static void createApplication(Application a) throws Exception {
-        Request request = new Request(Operation.APPL_CREATE, a);
-        sender.send(request);
-        Response response = (Response) receiver.receive();
-        if (response.getException() != null) {
-            JOptionPane.showMessageDialog(null, response.getException().getMessage(), "MOLIM TE", JOptionPane.ERROR_MESSAGE);
+        try {
+            Request request = new Request(Operation.APPL_CREATE, a);
+            sender.send(request);
+            Response response = (Response) receiver.receive();
+            if (response.getException() != null) {
+                JOptionPane.showMessageDialog(null, response.getException().getMessage(), "MOLIM TE", JOptionPane.ERROR_MESSAGE);
+            }
+            System.out.println(response.getResult());
+        } catch (SocketException e) {
+            JOptionPane.showMessageDialog(null, "Connection refused.", "System", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
         }
-        System.out.println(response.getResult());
     }
-    
+
     public static void updateApplication(Application apl1, Application apl2) throws Exception {
-        List<Application> la = new LinkedList<>();
-        la.add(apl1);
-        la.add(apl2);
-        Request request = new Request(Operation.APPL_UPDATE, la);
-        sender.send(request);
-        Response response = (Response) receiver.receive();
-        if (response.getException() != null) {
-            JOptionPane.showMessageDialog(null, response.getException().getMessage(), "MOLIM TE", JOptionPane.ERROR_MESSAGE);
+        try {
+            List<Application> la = new LinkedList<>();
+            la.add(apl1);
+            la.add(apl2);
+            Request request = new Request(Operation.APPL_UPDATE, la);
+            sender.send(request);
+            Response response = (Response) receiver.receive();
+            if (response.getException() != null) {
+                JOptionPane.showMessageDialog(null, response.getException().getMessage(), "MOLIM TE", JOptionPane.ERROR_MESSAGE);
+            }
+            System.out.println(response.getResult());
+        } catch (SocketException e) {
+            JOptionPane.showMessageDialog(null, "Connection refused.", "System", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
         }
-        System.out.println(response.getResult());
     }
 }

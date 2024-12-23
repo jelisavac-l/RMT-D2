@@ -264,7 +264,11 @@ public class FormMain extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnDisplayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDisplayActionPerformed
+        int row = jTable1.getSelectedRow();
         
+        ApplicationTableModel atm = (ApplicationTableModel) jTable1.getModel();
+        Application apl1 = atm.la.get(row);
+        new DialogApplicationData(null, true, apl1).setVisible(true);
 
     }//GEN-LAST:event_btnDisplayActionPerformed
 

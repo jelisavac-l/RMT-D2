@@ -1,6 +1,8 @@
 package com.jelisavacluka554.rmt_client;
 
 import com.jelisavacluka554.rmt_common.domain.User;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -202,12 +204,18 @@ public class DialogRegister extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_cbAcceptActionPerformed
 
+   public static Date asDate(LocalDateTime localDateTime) {
+    return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+  }
+    
     private void btnRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegisterActionPerformed
         // TODO add validation
-        Date birthday = new Date(
-                Integer.parseInt(txtYear.getText()), 
-                Integer.parseInt(txtMonth.getText()), 
-                Integer.parseInt(txtDay.getText()));
+        LocalDateTime birthday = LocalDateTime.of(
+                Integer.parseInt(txtYear.getText()),
+                Integer.parseInt(txtMonth.getText()),
+                Integer.parseInt(txtDay.getText()),
+                0, 0
+                );
         
         User user = new User(
                 null,
@@ -217,7 +225,7 @@ public class DialogRegister extends javax.swing.JDialog {
                 txtPassport.getText(),
                 txtUsername.getText(),
                 txtPassword.getText(),
-                birthday
+                asDate(birthday)
         );
         System.out.println("Attempting to register " + user);
         try {

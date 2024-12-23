@@ -109,7 +109,7 @@ public class ApplicationController {
         String query = "SELECT \n"
                 + "a.id AS aid, a.dateofapplication, a.dateofentry, a.duration,\n"
                 + "t.id AS tid, t.name AS transport,\n"
-                + "u.id AS uid, u.firstname, u.lastname, u.jmbg, u.passport, u.username, u.pass\n"
+                + "u.id AS uid, u.firstname, u.lastname, u.jmbg, u.passport, u.username, u.pass, u.birthday\n"
                 + "FROM application a\n"
                 + "JOIN transport t ON t.id = a.transport\n"
                 + "JOIN users u ON u.id = a.userid WHERE a.userid=" + u.getId() + "\n"
@@ -127,7 +127,8 @@ public class ApplicationController {
                     rs.getString("jmbg"),
                     rs.getString("passport"),
                     rs.getString("username"),
-                    null);  // Safety null
+                    null,
+                    rs.getDate("birthday"));
             Application tapplication = new Application(
                     rs.getLong("aid"),
                     tuser,
