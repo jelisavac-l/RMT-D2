@@ -36,6 +36,7 @@ public class FormLogin extends javax.swing.JFrame {
         btnLogin = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
+        checkUnregistered = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Login form");
@@ -72,6 +73,13 @@ public class FormLogin extends javax.swing.JFrame {
             }
         });
 
+        checkUnregistered.setText("unregistered");
+        checkUnregistered.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                checkUnregisteredActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -80,7 +88,9 @@ public class FormLogin extends javax.swing.JFrame {
                 .addContainerGap(50, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel3)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addComponent(checkUnregistered))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel4))
                     .addComponent(jLabel2)
@@ -106,8 +116,10 @@ public class FormLogin extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(btnLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel4)
-                .addContainerGap(151, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(checkUnregistered))
+                .addContainerGap(146, Short.MAX_VALUE))
         );
 
         pack();
@@ -155,12 +167,24 @@ public class FormLogin extends javax.swing.JFrame {
         new DialogRegister(null, true).setVisible(true);
     }//GEN-LAST:event_jLabel4MouseClicked
 
+    private void checkUnregisteredActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkUnregisteredActionPerformed
+        // TODO add your handling code here:
+        if(checkUnregistered.isSelected()) {
+            jLabel1.setText("JMBG:");
+            jLabel2.setText("Passport:");
+        } else {
+            jLabel1.setText("Username:");
+            jLabel2.setText("Password:");
+        }
+    }//GEN-LAST:event_checkUnregisteredActionPerformed
+
     /**
      * @param args the command line arguments
      */
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnLogin;
+    private javax.swing.JCheckBox checkUnregistered;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

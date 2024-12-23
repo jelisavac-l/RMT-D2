@@ -11,7 +11,6 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License. 
-
 package com.jelisavacluka554.rmt_server.controllers;
 
 import com.jelisavacluka554.rmt_server.db.DatabaseConnection;
@@ -185,7 +184,7 @@ public class ApplicationController {
         // Then, add items
         var lai = a.getItems();
         for (var ai : lai) {
-            
+
             // Da mi Gospod Bog oprosti za ovo.
             ai.setApplication(new Application(genId, null, null, null, null, null));
             addApplicationItem(ai);
@@ -194,29 +193,52 @@ public class ApplicationController {
 
         System.out.println("Items added.");
     }
-
-    /**
-     * Overwrites application apl1 with data from apl2.
-     * @param apl1 old application
-     * @param apl2 new application
-     * @throws SQLException 
-     */
-    public static void updateApplication(Application apl1, Application apl2) throws SQLException {
-        String query = "UPDATE rmt1.application\n"
-                + "SET transport=?, dateofapplication=?, dateofentry=?, duration=?\n"
-                + "WHERE application.id=?;";
+    
+    public static void deleteItems(Application apl) throws SQLException
+    {
+        String query = "DELETE FROM rmt1.applicationitem \n" +
+                       "WHERE application=?";
         
         Connection conn = DatabaseConnection.getConnection();
         PreparedStatement ps = conn.prepareStatement(query);
-        
+        ps.setLong(1, apl.getId());
+        ps.executeUpdate();
+    }
+
+    /**
+     * Overwrites application apl1 with data from apl2.
+     *
+     * @param apl1 old application
+     * @param apl2 new application
+     * @throws SQLException
+     */
+    public static void updateApplication(Application apl1, Application apl2) throws SQLException {
+        String query = "UPDATE rmt1.application a\n"
+                + "	SET transport=?, dateofapplication=?, dateofentry=?, duration=?\n"
+                + "	WHERE a.id=?;";
+
+        Connection conn = DatabaseConnection.getConnection();
+        PreparedStatement ps = conn.prepareStatement(query);
+
         ps.setLong(1, apl2.getTransport().getId());
-        ps.setDate(2, (Date) apl2.getDateOfApplication());
-        ps.setDate(3, (Date) apl2.getDateOfEntry());
+        ps.setDate(2, new Date(apl2.getDateOfApplication().getTime()));
+        ps.setDate(3, new Date(apl2.getDateOfEntry().getTime()));
         ps.setInt(4, apl2.getDuration());
         ps.setLong(5, apl1.getId());
-        
+
         ps.executeUpdate();
-        
-        System.out.println("Application " + apl1.getId() + " updated.");
+
+        System.out.println("Application " + apl1.getId() + " updated, updating items..");
+        deleteItems(apl1);
+        var lai = apl2.getItems();
+        for (var ai : lai) {
+
+            // Da mi Gospod Bog oprosti za ovo.
+            ai.setApplication(new Application(apl1.getId(), null, null, null, null, null));
+            addApplicationItem(ai);
+            System.out.println("\t-> " + ai.getCountry().getName());
+        }
+
+        System.out.println("Items added.");
     }
 }

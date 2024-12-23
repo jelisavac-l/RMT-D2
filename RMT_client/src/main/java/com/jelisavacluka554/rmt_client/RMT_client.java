@@ -19,6 +19,7 @@ import com.jelisavacluka554.rmt_common.domain.*;
 import com.jelisavacluka554.rmt_common.communication.*;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 import javax.swing.JOptionPane;
@@ -141,6 +142,19 @@ public class RMT_client {
     
     public static void createApplication(Application a) throws Exception {
         Request request = new Request(Operation.APPL_CREATE, a);
+        sender.send(request);
+        Response response = (Response) receiver.receive();
+        if (response.getException() != null) {
+            JOptionPane.showMessageDialog(null, response.getException().getMessage(), "MOLIM TE", JOptionPane.ERROR_MESSAGE);
+        }
+        System.out.println(response.getResult());
+    }
+    
+    public static void updateApplication(Application apl1, Application apl2) throws Exception {
+        List<Application> la = new LinkedList<>();
+        la.add(apl1);
+        la.add(apl2);
+        Request request = new Request(Operation.APPL_UPDATE, la);
         sender.send(request);
         Response response = (Response) receiver.receive();
         if (response.getException() != null) {

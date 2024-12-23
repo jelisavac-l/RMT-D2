@@ -57,11 +57,11 @@ public class RMT_server extends Thread {
             while (true) {
                 Socket socket = serverSocket.accept();
                 System.out.println("[M] Accepting a new connection.");
-                
+
                 new RMT_server(socket).start();
             }
 
-        } catch(BindException ex) { 
+        } catch (BindException ex) {
             System.err.println("Address is already in use. Stop all other instances of server before start.");
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
@@ -93,7 +93,7 @@ public class RMT_server extends Thread {
                 result = "pong";
                 break;
             }
-            
+
             case MSG: {
                 System.out.println(request.getArgument());
                 break;
@@ -101,13 +101,18 @@ public class RMT_server extends Thread {
 
             case LOGIN: {
                 User user = (User) request.getArgument();
+
                 System.out.println("Authentication for: " + user.getUsername() + " " + user.getPassword());
                 User found = UserController.getUserFromCredentials(user.getUsername(), user.getPassword());
+                if (found == null) {
+                    found = UserController.getNonRegisteredUser(user.getUsername(), user.getPassword());
+                }
                 if (found == null) {
                     throw new Exception("User not found!");
                 } else {
                     result = found;
                 }
+
                 break;
             }
 
@@ -121,7 +126,7 @@ public class RMT_server extends Thread {
 
                 System.out.println("Registering a new user.");
                 try {
-                    UserController.addUserWithValidation(user);
+                    UserController.addUser(user);
                 } catch (Exception ex) {
                     System.err.println(ex.getMessage());
                     throw new Exception("Registration failed: " + ex.getMessage());
@@ -139,11 +144,11 @@ public class RMT_server extends Thread {
             }
 
             case APPL_CREATE: {
-                try{
-                Application application = (Application) request.getArgument();
-                System.out.println(application.getItems());
-                ApplicationController.addApplication(application);
-                result = "OK";
+                try {
+                    Application application = (Application) request.getArgument();
+                    System.out.println(application.getItems());
+                    ApplicationController.addApplication(application);
+                    result = "OK";
                 } catch (Exception e) {
                     throw new Exception(e.getMessage());
                 }
@@ -151,16 +156,24 @@ public class RMT_server extends Thread {
             }
 
             case APPL_UPDATE: {
+                try {
+                    List<Application> la = (List<Application>) request.getArgument();
+                    ApplicationController.updateApplication(la.get(0), la.get(1));
+                    result = "Application updated!";
+                } catch (Exception e) {
+                    System.err.println(e.getMessage());
+                    throw new Exception(e.getMessage());
 
+                }
                 break;
             }
-            
+
             case EUC_GET_LIST: {
                 // TODO: handle excepts.
                 result = EUCountryController.getAllEUCountries();
                 break;
             }
-            
+
             case T_GET_LIST: {
                 // TODO: handle excepts.
                 result = TransportController.getAllTransports();
@@ -180,10 +193,10 @@ public class RMT_server extends Thread {
         try {
 
             while (true) {
-                
+
                 Request request = (Request) receiver.receive();
                 response = new Response();
-                System.out.println( "[" + this.getId() + "] " + socket.getInetAddress().toString().substring(1) + " requested " + request.getOperation());
+                System.out.println("[" + this.getId() + "] " + socket.getInetAddress().toString().substring(1) + " requested " + request.getOperation());
 
                 // Handling a STOP signal.
                 if (request.getOperation() == Operation.STOP) {
@@ -207,7 +220,7 @@ public class RMT_server extends Thread {
                 }
 
             }
-        } catch(EOFException ex) {
+        } catch (EOFException ex) {
             System.err.println("Connection ended prematurely.");
         } catch (Exception ex) {
             System.err.println(ex.getMessage());

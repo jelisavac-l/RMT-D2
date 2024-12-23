@@ -4,6 +4,7 @@ import com.jelisavacluka554.rmt_common.domain.Application;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.table.TableModel;
 
 /**
@@ -64,6 +65,11 @@ public class FormMain extends javax.swing.JFrame {
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("My Applications"));
 
         btnUpdate.setText("Update selected");
+        btnUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUpdateActionPerformed(evt);
+            }
+        });
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -79,6 +85,11 @@ public class FormMain extends javax.swing.JFrame {
         jScrollPane1.setViewportView(jTable1);
 
         btnDisplay.setText("Show");
+        btnDisplay.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDisplayActionPerformed(evt);
+            }
+        });
 
         btnAdd.setFont(new java.awt.Font("sansserif", 1, 13)); // NOI18N
         btnAdd.setForeground(new java.awt.Color(0, 51, 153));
@@ -251,6 +262,23 @@ public class FormMain extends javax.swing.JFrame {
         new DialogNewApplication(null, true).setVisible(true);
         initTable();
     }//GEN-LAST:event_btnAddActionPerformed
+
+    private void btnDisplayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDisplayActionPerformed
+        
+
+    }//GEN-LAST:event_btnDisplayActionPerformed
+
+    private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
+        int row = jTable1.getSelectedRow();
+        if(!jTable1.getValueAt(row, 6).equals("APPLIED")) {
+            JOptionPane.showMessageDialog(null, "Selected application is locked or expired.", "System", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        ApplicationTableModel atm = (ApplicationTableModel) jTable1.getModel();
+        Application apl1 = atm.la.get(row);
+        new DialogUpdateApplication(null, true, apl1).setVisible(true);
+        initTable();
+    }//GEN-LAST:event_btnUpdateActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

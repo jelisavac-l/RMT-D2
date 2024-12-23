@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,27 +22,48 @@ import javax.swing.JOptionPane;
  *
  * @author luka
  */
-public class DialogNewApplication extends javax.swing.JDialog {
+public class DialogUpdateApplication extends javax.swing.JDialog {
 
     private List<Transport> lt;
     private List<EUCountry> lcAll;
     private List<EUCountry> lcTable;
+    Application old;
 
     /**
      * Creates new form DialogNewApplication
      */
-    public DialogNewApplication(java.awt.Frame parent, boolean modal) {
+    public DialogUpdateApplication(java.awt.Frame parent, boolean modal, Application old) {
         super(parent, modal);
         initComponents();
         this.setLocationRelativeTo(this);
-
+        
+        this.old = old;
+        
         lcTable = new LinkedList<>();
-
+        
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(old.getDateOfEntry());
+        
+        LocalDate localDate = LocalDate.of(calendar.get(Calendar.YEAR), 
+                                           calendar.get(Calendar.MONTH) + 1,
+                                           calendar.get(Calendar.DAY_OF_MONTH));
+        
+        txtDay.setText(Integer.toString(localDate.getDayOfMonth()));
+        txtMonth.setText(Integer.toString(localDate.getMonthValue()));
+        txtYear.setText(Integer.toString(localDate.getYear()));
+        txtDuration.setText(Integer.toString(old.getDuration()));
+        
+        
+        for(var c : old.getItems())
+            lcTable.add(c.getCountry());
+        
         if(RMT_client.getLoggedUser().getAge() < 18 || RMT_client.getLoggedUser().getAge() > 70)
             checkFree.setSelected(true);
         getData();
         initComboBoxes();
         initTable();
+        
+        // SET COMBOBOX SELECTED ITEM
     }
 
     /**
@@ -76,7 +98,7 @@ public class DialogNewApplication extends javax.swing.JDialog {
         jCheckBox1.setText("jCheckBox1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("New Application");
+        setTitle("Update Application");
         setResizable(false);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Countries of visit"));
@@ -99,6 +121,7 @@ public class DialogNewApplication extends javax.swing.JDialog {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tblCountry.setToolTipText("Click to remove.");
         tblCountry.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tblCountryMouseClicked(evt);
@@ -292,9 +315,10 @@ public class DialogNewApplication extends javax.swing.JDialog {
         application.setItems(items);
         
         try {
-            RMT_client.createApplication(application);
+            RMT_client.updateApplication(old, application);
         } catch (Exception ex) {
-            Logger.getLogger(DialogNewApplication.class.getName()).log(Level.SEVERE, null, ex);
+            System.err.println("AAAAAAAAAAAAAAAAAAAAAAAAAAaa");
+            Logger.getLogger(DialogUpdateApplication.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         this.dispose();
@@ -345,7 +369,7 @@ public class DialogNewApplication extends javax.swing.JDialog {
             lcAll = RMT_client.getEUCountryList();
             lt = RMT_client.getTransportList();
         } catch (Exception ex) {
-            Logger.getLogger(DialogNewApplication.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DialogUpdateApplication.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

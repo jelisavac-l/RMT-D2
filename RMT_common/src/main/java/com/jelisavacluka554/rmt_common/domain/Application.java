@@ -119,6 +119,9 @@ public class Application implements Serializable {
         this.items = items;
     }
     
+    public int getUserAgeAtApplicationDate() {
+        return 1;
+    }
     
     
 }

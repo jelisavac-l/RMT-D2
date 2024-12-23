@@ -1,6 +1,8 @@
 package com.jelisavacluka554.rmt_common.domain;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -101,6 +103,13 @@ public class User implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+    
+    public int getAge() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(birthday);
+        return LocalDate.now().getYear() - calendar.get(Calendar.YEAR);
+        
     }
 
     @Override

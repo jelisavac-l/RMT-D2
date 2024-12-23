@@ -109,8 +109,8 @@ public class UserController {
 
     }
     
-    /** Only to be used for logging in.
-     * 
+    /** 
+     * Only to be used for logging in. (Registered users)
      * @param username
      * @param password
      * @return User object (if exists)
@@ -124,6 +124,36 @@ public class UserController {
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setString(1, username);
         ps.setString(2, password);
+        ResultSet rs = ps.executeQuery();
+        if(rs.next()) {
+            found = new User(
+                    rs.getLong("id"),
+                    rs.getString(2),
+                    rs.getString(3),
+                    rs.getString(4),
+                    rs.getString(5),
+                    rs.getString(6),
+                    rs.getString(7),
+                    rs.getDate("birthday")
+            );
+        }
+        return found;
+    }
+
+    /**
+     * Only to be used for logging in. (Unregistered users)
+     * @param jmbg
+     * @param passport
+     * @return User object (if exists)
+     * @throws SQLException if credentials don't match. 
+     */
+    public static User getNonRegisteredUser(String jmbg, String passport) throws SQLException {
+        User found = null;
+        String query = "SELECT * FROM rmt1.users WHERE jmbg=? AND passport=?";
+        Connection conn = DatabaseConnection.getConnection();
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setString(1, jmbg);
+        ps.setString(2, passport);
         ResultSet rs = ps.executeQuery();
         if(rs.next()) {
             found = new User(
