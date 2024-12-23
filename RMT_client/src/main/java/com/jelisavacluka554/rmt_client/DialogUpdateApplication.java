@@ -64,6 +64,7 @@ public class DialogUpdateApplication extends javax.swing.JDialog {
         initTable();
         
         // SET COMBOBOX SELECTED ITEM
+        
     }
 
     /**
@@ -359,8 +360,13 @@ public class DialogUpdateApplication extends javax.swing.JDialog {
             cbCountry.addItem(c);
         }
 
+        Transport oldTransport = old.getTransport();
         for (var t : lt) {
+            
+                
             cbTransport.addItem(t);
+            if (t.getName().equals(oldTransport.getName()))
+                cbTransport.setSelectedItem(t);
         }
     }
 

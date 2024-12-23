@@ -120,13 +120,9 @@ public class RMT_server extends Thread {
                 User user = (User) request.getArgument();
                 System.out.println(user);
 
-                if (!validateUser(user)) {
-                    throw new Exception("Incorrect credentials!");
-                }
-
                 System.out.println("Registering a new user.");
                 try {
-                    UserController.addUser(user);
+                    UserController.addUserWithValidation(user);
                 } catch (Exception ex) {
                     System.err.println(ex.getMessage());
                     throw new Exception("Registration failed: " + ex.getMessage());
@@ -231,10 +227,5 @@ public class RMT_server extends Thread {
                 System.err.println(ex1.getMessage());
             }
         }
-    }
-
-    private boolean validateUser(User user) {
-        return true;
-        // Do validation later.
     }
 }

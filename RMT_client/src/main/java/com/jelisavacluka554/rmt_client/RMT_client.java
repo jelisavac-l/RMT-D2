@@ -13,7 +13,6 @@
 //   limitations under the License. 
 package com.jelisavacluka554.rmt_client;
 
-// TODO: MOVE DOMAIN AND COMMUNICATION TO "COMMON"
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.jelisavacluka554.rmt_common.domain.*;
 import com.jelisavacluka554.rmt_common.communication.*;
@@ -23,6 +22,8 @@ import java.net.SocketException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -57,17 +58,20 @@ public class RMT_client {
             new FormLogin().setVisible(true);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, e.getMessage(), "System", JOptionPane.ERROR_MESSAGE);
-            System.exit(1);
+            
         }
 
     }
 
-    private static void init() throws IOException {
+    private static void init(){
         try {
             socket = new Socket("127.0.0.1", 9554);
             sender = new Sender(socket);
             receiver = new Receiver(socket);
-        } catch (SocketException e) {
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Connection refused.", "System", JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
+        } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Connection refused.", "System", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
         }
@@ -75,10 +79,13 @@ public class RMT_client {
 
     public static void disconnect() throws Exception {
         try {
-            System.out.println("Disconnectiong...");
+            System.out.println("Disconnecting...");
             sender.send(new Request(Operation.STOP, null));
             System.out.println("Disconnected!");
-        } catch (SocketException e) {
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Connection refused.", "System", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
+        } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Connection refused.", "System", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
         }
@@ -89,14 +96,17 @@ public class RMT_client {
             sender.send(new Request(Operation.PING, null));
             Response response = (Response) receiver.receive();
             System.out.println(response.getResult());
-        }  catch (SocketException e) {
+        }  catch (IOException e) {
         JOptionPane.showMessageDialog(null, "Connection refused.", "System", JOptionPane.ERROR_MESSAGE);
         System.exit(1);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Connection refused.", "System", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
         }
     }
    
 
-    public static User login(String username, String password) throws Exception {
+    public static User login(String username, String password) {
         try {
             User user = new User(null, null, null, null, null, username, password);
             Request request = new Request(Operation.LOGIN, user);
@@ -110,7 +120,10 @@ public class RMT_client {
             System.out.println(newUser);
             getApplicationList(newUser);
             return newUser;
-        } catch (SocketException e) {
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Connection refused.", "System", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
+        } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Connection refused.", "System", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
         }
@@ -129,7 +142,10 @@ public class RMT_client {
                 JOptionPane.showMessageDialog(null, user + " has been registered!", "System", JOptionPane.INFORMATION_MESSAGE);
                 return true;
             }
-        } catch (SocketException e) {
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Connection refused.", "System", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
+        } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Connection refused.", "System", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
         }
@@ -149,7 +165,10 @@ public class RMT_client {
                 JOptionPane.showMessageDialog(null, response.getException().getMessage(), "System", JOptionPane.ERROR_MESSAGE);
             }
             return (List<Application>) response.getResult();
-        } catch (SocketException e) {
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Connection refused.", "System", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
+        } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Connection refused.", "System", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
         }
@@ -165,7 +184,10 @@ public class RMT_client {
                 JOptionPane.showMessageDialog(null, response.getException().getMessage(), "System", JOptionPane.ERROR_MESSAGE);
             }
             return (List<EUCountry>) response.getResult();
-        } catch (SocketException e) {
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Connection refused.", "System", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
+        } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Connection refused.", "System", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
         }
@@ -182,7 +204,10 @@ public class RMT_client {
                 JOptionPane.showMessageDialog(null, response.getException().getMessage(), "System", JOptionPane.ERROR_MESSAGE);
             }
             return (List<Transport>) response.getResult();
-        } catch (SocketException e) {
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Connection refused.", "System", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
+        } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Connection refused.", "System", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
         }
@@ -198,7 +223,10 @@ public class RMT_client {
                 JOptionPane.showMessageDialog(null, response.getException().getMessage(), "MOLIM TE", JOptionPane.ERROR_MESSAGE);
             }
             System.out.println(response.getResult());
-        } catch (SocketException e) {
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Connection refused.", "System", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
+        } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Connection refused.", "System", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
         }
@@ -216,7 +244,10 @@ public class RMT_client {
                 JOptionPane.showMessageDialog(null, response.getException().getMessage(), "MOLIM TE", JOptionPane.ERROR_MESSAGE);
             }
             System.out.println(response.getResult());
-        } catch (SocketException e) {
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Connection refused.", "System", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
+        } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Connection refused.", "System", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
         }
